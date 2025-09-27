@@ -1,0 +1,1 @@
+AGENT_COSTS = {'perplexity': 0.65, 'youtube': 0.15, 'api': 0.35}

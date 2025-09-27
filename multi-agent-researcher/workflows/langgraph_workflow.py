@@ -1,0 +1,2 @@
+class ResearchWorkflow:
+    pass
