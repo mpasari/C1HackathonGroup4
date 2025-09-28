@@ -52,6 +52,7 @@ import sys
 
 
 
+from pathlib import Path
 from dotenv import load_dotenv
 
 
@@ -165,6 +166,33 @@ from src.utils.pdf_exporter import markdown_to_pdf_bytes
 
 
 
+
+APP_DIR = Path(__file__).resolve().parent
+PROMPTS_DIR = (APP_DIR / 'src' / 'prompts').resolve()
+
+DOMAIN_OPTIONS = [
+    {
+        "label": "Clinical & Scientific Research",
+        "perplexity_domain": "medical",
+        "prompt_path": str((PROMPTS_DIR / "investment_god_prompt.txt").resolve()),
+    },
+    {
+        "label": "Deep Tech & AI Analysis",
+        "perplexity_domain": "technology",
+        "prompt_path": str((PROMPTS_DIR / "technology_god_prompt.txt").resolve()),
+    },
+    {
+        "label": "Scholarly Field Review",
+        "perplexity_domain": "academic",
+        "prompt_path": str((PROMPTS_DIR / "academia_god_prompt.txt").resolve()),
+    },
+    {
+        "label": "Equity Research Report",
+        "perplexity_domain": "stocks",
+        "prompt_path": str((PROMPTS_DIR / "finance_intent_prompt.txt").resolve()),
+    },
+]
+DOMAIN_LABEL_TO_CONFIG = {item["label"]: item for item in DOMAIN_OPTIONS}
 
 OPTIONAL_AGENT_OPTIONS = [
     ("Web Research", "web_researcher"),
@@ -1226,6 +1254,12 @@ research_graph = build_graph()
 controls_col, results_col = st.columns([2, 3], gap='large')
 
 with controls_col:
+    domain_labels = [opt["label"] for opt in DOMAIN_OPTIONS]
+    default_domain = st.session_state.get("selected_domain", domain_labels[0])
+    domain_index = domain_labels.index(default_domain) if default_domain in domain_labels else 0
+    selected_domain_label = st.selectbox("Select research focus", domain_labels, index=domain_index)
+    st.session_state["selected_domain"] = selected_domain_label
+
     topic = st.text_input("Enter the research topic:", "", placeholder="e.g., 'The future of AI in healthcare'", key="topic_input")
     stored_selection = st.session_state.get("selected_agents")
     if stored_selection is None:
@@ -1237,6 +1271,7 @@ with controls_col:
     selected_labels = st.multiselect("Choose researchers to include:", agent_labels, default=default_labels)
     selected_agent_steps = [OPTIONAL_AGENT_LABEL_TO_ID[label] for label in selected_labels]
     st.session_state["selected_agents"] = selected_agent_steps if selected_agent_steps else []
+    selected_domain_config = DOMAIN_LABEL_TO_CONFIG[selected_domain_label]
     start_clicked = st.button("Start Research", type="primary")
     progress_container = st.container()
 with results_col:
@@ -1363,7 +1398,15 @@ if start_clicked:
 
 
 
-        state: Dict[str, Any] = {"topic": topic, "mode": mode_key, "selected_agents": selected_agent_steps}
+        state: Dict[str, Any] = {
+            "topic": topic,
+            "mode": mode_key,
+            "selected_agents": selected_agent_steps,
+            "domain": selected_domain_config["perplexity_domain"],
+            "domain_label": selected_domain_label,
+            "perplexity_prompt_path": selected_domain_config["prompt_path"],
+            "synthesizer_prompt_path": selected_domain_config["prompt_path"],
+        }
 
 
 

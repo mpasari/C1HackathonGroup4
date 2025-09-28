@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import json
-import os
+from pathlib import Path
+from typing import Optional
 
 from src.graph.state import ResearchState
 from src.utils.llm_registry import invoke_llm, zero_metrics
@@ -10,6 +11,13 @@ from src.utils.llm_registry import invoke_llm, zero_metrics
 
 MAX_PROMPT_CHARS_EXTENDED = 65000
 MAX_PROMPT_CHARS_SIMPLE = 20000
+
+class _SafeFormatDict(dict):
+    """Dictionary that leaves unknown placeholders untouched during formatting."""
+
+    def __missing__(self, key: str) -> str:
+        return '{' + key + '}'
+
 
 def _truncate_agent_outputs(text: str, max_chars: int) -> tuple[str, bool]:
     if len(text) <= max_chars:
@@ -19,15 +27,24 @@ def _truncate_agent_outputs(text: str, max_chars: int) -> tuple[str, bool]:
     return truncated, True
 
 
-def load_synthesizer_prompt(mode: str = "extended") -> str:
-    """Return the report-writing prompt tailored to *mode*."""
-    if mode == "simple":
-        prompt_file = "../prompts/synthesizer_prompt_simple.txt"
-    else:
-        prompt_file = "../prompts/synthesizer_prompt.txt"
-    prompt_path = os.path.join(os.path.dirname(__file__), prompt_file)
-    with open(os.path.abspath(prompt_path), "r", encoding="utf-8") as handle:
-        return handle.read()
+def load_synthesizer_prompt(mode: str = 'extended', prompt_path: Optional[str] = None) -> str:
+    """Return the report-writing prompt tailored to *mode*, allowing domain overrides."""
+    candidate_paths = []
+    if prompt_path:
+        candidate_paths.append(Path(prompt_path))
+    base_dir = Path(__file__).resolve().parent
+    fallback = base_dir / ('../prompts/synthesizer_prompt_simple.txt' if mode == 'simple' else '../prompts/synthesizer_prompt.txt')
+    candidate_paths.append(fallback.resolve())
+
+    for candidate in candidate_paths:
+        try:
+            if candidate and candidate.exists():
+                return candidate.read_text(encoding='utf-8')
+        except (TypeError, ValueError):
+            continue
+
+    tried = [str(candidate) for candidate in candidate_paths if candidate]
+    raise FileNotFoundError(f'Synthesizer prompt template not found. Tried: {tried}.')
 
 
 def _serialize_for_prompt(value: object) -> str:
@@ -58,16 +75,26 @@ def gather_agent_outputs(state: ResearchState) -> str:
     return "\n\n".join(sections)
 
 
-def generate_final_report(state: ResearchState, mode: str = "extended") -> dict:
+def generate_final_report(state: ResearchState, mode: str = 'extended') -> dict:
     """Call the synthesiser LLM to produce the final report for *state*."""
-    prompt_template = load_synthesizer_prompt(mode)
-    topic = state.get("topic", "")
+    prompt_template = load_synthesizer_prompt(mode, state.get('synthesizer_prompt_path'))
+    topic = state.get('topic', '')
     agent_outputs = gather_agent_outputs(state)
-    max_chars = MAX_PROMPT_CHARS_SIMPLE if mode == "simple" else MAX_PROMPT_CHARS_EXTENDED
+    max_chars = MAX_PROMPT_CHARS_SIMPLE if mode == 'simple' else MAX_PROMPT_CHARS_EXTENDED
     agent_outputs, prompt_truncated = _truncate_agent_outputs(agent_outputs, max_chars)
-    prompt = prompt_template.format(topic=topic, agent_outputs=agent_outputs)
+    context = _SafeFormatDict(topic=topic, query=topic, agent_outputs=agent_outputs)
+    formatted_prompt = prompt_template.format_map(context)
+    if '{agent_outputs' in prompt_template:
+        prompt = formatted_prompt
+    else:
+        prompt = (
+            f"{formatted_prompt}\n\n---\n"
+            "Use only the research materials provided below. "
+            "Synthesize the findings and do not perform new external research.\n\n"
+            f"Provided Research Materials:\n{agent_outputs}"
+        )
 
-    temperature = 0.0 if mode == "simple" else 0.2
+    temperature = 0.0 if mode == 'simple' else 0.2
     try:
         response, metrics = invoke_llm("synthesiser", prompt, temperature=temperature)
         report = response.content.strip()
