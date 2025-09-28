@@ -1,0 +1,260 @@
+[
+  {
+    "video": {
+      "video_id": "hXwwlisz5-w",
+      "title": "Will AI Replace Human Jobs? The Truth about the Future of Work",
+      "description": "Will artificial intelligence really take over human jobs? Or will it create new opportunities? In this video, we break down the truth ...",
+      "channel": "VistraLens",
+      "published_at": "2025-09-25T01:41:16Z",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/hXwwlisz5-w/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/hXwwlisz5-w/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/hXwwlisz5-w/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      }
+    },
+    "details": {
+      "video_id": "hXwwlisz5-w",
+      "duration": "4:38",
+      "views": "8",
+      "likes": "0",
+      "comments": "0",
+      "language": "unknown",
+      "transcript_path": null,
+      "transcript_source": null,
+      "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+      "debug": [
+        "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+        "whisper: ffmpeg_not_found"
+      ]
+    },
+    "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+    "transcript_path": null
+  },
+  {
+    "video": {
+      "video_id": "yYMEzptRmiA",
+      "title": "How AI could transform the future of medicine",
+      "description": "Artificial intelligence is revolutionizing medicine with new diagnostic tools, automated processes and predictive analytics.",
+      "channel": "Washington Post Live",
+      "published_at": "2025-09-09T14:39:12Z",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/yYMEzptRmiA/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/yYMEzptRmiA/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/yYMEzptRmiA/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      }
+    },
+    "details": {
+      "video_id": "yYMEzptRmiA",
+      "duration": "1:27:42",
+      "views": "270",
+      "likes": "11",
+      "comments": "0",
+      "language": "unknown",
+      "transcript_path": null,
+      "transcript_source": null,
+      "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+      "debug": [
+        "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+        "whisper: ffmpeg_not_found"
+      ]
+    },
+    "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+    "transcript_path": null
+  },
+  {
+    "video": {
+      "video_id": "vB8dwh4cOpo",
+      "title": "How A.I. is transforming the future of healthcare",
+      "description": "How A.I. is transforming the future of healthcare.",
+      "channel": "WREG News Channel 3",
+      "published_at": "2025-08-27T15:03:50Z",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/vB8dwh4cOpo/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/vB8dwh4cOpo/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/vB8dwh4cOpo/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      }
+    },
+    "details": {
+      "video_id": "vB8dwh4cOpo",
+      "duration": "1:46",
+      "views": "216",
+      "likes": "5",
+      "comments": "2",
+      "language": "unknown",
+      "transcript_path": null,
+      "transcript_source": null,
+      "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+      "debug": [
+        "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+        "whisper: ffmpeg_not_found"
+      ]
+    },
+    "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+    "transcript_path": null
+  },
+  {
+    "video": {
+      "video_id": "chR4bHRCxeo",
+      "title": "How electronic health record AI is changing medical summaries for doctors and helping patients",
+      "description": "AI patient summaries: Who writes after-visit summaries? How reliable is AI in health care? Can AI help write clinical notes? How is ...",
+      "channel": "American Medical Association (AMA)",
+      "published_at": "2025-07-21T11:01:04Z",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/chR4bHRCxeo/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/chR4bHRCxeo/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/chR4bHRCxeo/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      }
+    },
+    "details": {
+      "video_id": "chR4bHRCxeo",
+      "duration": "13:31",
+      "views": "5200",
+      "likes": "118",
+      "comments": "10",
+      "language": "unknown",
+      "transcript_path": null,
+      "transcript_source": null,
+      "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+      "debug": [
+        "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+        "whisper: ffmpeg_not_found"
+      ]
+    },
+    "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+    "transcript_path": null
+  },
+  {
+    "video": {
+      "video_id": "pfbiHmRPmV8",
+      "title": "AI in Healthcare Series: The Future of Personalized Healthcare Technology with Dr. Jessica Mega",
+      "description": "Learn more about Stanford Online's AI in Healthcare programs: ...",
+      "channel": "Stanford Online",
+      "published_at": "2025-07-07T16:07:51Z",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/pfbiHmRPmV8/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/pfbiHmRPmV8/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/pfbiHmRPmV8/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      }
+    },
+    "details": {
+      "video_id": "pfbiHmRPmV8",
+      "duration": "37:59",
+      "views": "25885",
+      "likes": "718",
+      "comments": "24",
+      "language": "unknown",
+      "transcript_path": null,
+      "transcript_source": null,
+      "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+      "debug": [
+        "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+        "whisper: ffmpeg_not_found"
+      ]
+    },
+    "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+    "transcript_path": null
+  },
+  {
+    "video": {
+      "video_id": "N0w9uO7kH80",
+      "title": "How AI is reshaping the future of healthcare and medical research",
+      "description": "Technologists Bill Gates and Sébastien Bubeck discuss the state of generative AI in medicine, how access to “medical ...",
+      "channel": "Microsoft Research",
+      "published_at": "2025-06-12T16:17:33Z",
+      "thumbnails": {
+        "default": {
+          "url": "https://i.ytimg.com/vi/N0w9uO7kH80/default.jpg",
+          "width": 120,
+          "height": 90
+        },
+        "medium": {
+          "url": "https://i.ytimg.com/vi/N0w9uO7kH80/mqdefault.jpg",
+          "width": 320,
+          "height": 180
+        },
+        "high": {
+          "url": "https://i.ytimg.com/vi/N0w9uO7kH80/hqdefault.jpg",
+          "width": 480,
+          "height": 360
+        }
+      }
+    },
+    "details": {
+      "video_id": "N0w9uO7kH80",
+      "duration": "38:59",
+      "views": "8154",
+      "likes": "216",
+      "comments": "11",
+      "language": "unknown",
+      "transcript_path": null,
+      "transcript_source": null,
+      "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+      "debug": [
+        "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+        "whisper: ffmpeg_not_found"
+      ]
+    },
+    "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+    "transcript_path": null
+  }
+]

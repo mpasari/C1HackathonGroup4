@@ -1,10 +1,7 @@
-# This module provides tools for performing web searches using various APIs and services.
 import os
+
 from dotenv import load_dotenv
 from langchain_community.tools import DuckDuckGoSearchRun
-
-dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
-load_dotenv(dotenv_path)
 
 # Attempt to import SearchAPIRun for SearchApi.io (SerpAPI alternative).
 try:
@@ -19,6 +16,9 @@ try:
     TAVILY_AVAILABLE = True
 except ImportError:
     TAVILY_AVAILABLE = False
+
+dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+load_dotenv(dotenv_path)
 
 # duckduckgo_search: Performs a web search using DuckDuckGo (no API key required).
 # Returns a list of web search result summaries or links.
@@ -48,6 +48,3 @@ if TAVILY_AVAILABLE and tavily_key:
         tavily_search = None
 else:
     tavily_search = None
-
-# Example usage:
-#   duckduckgo_search.run(query), serpapi_search.run(query), tavily_search.run(query)

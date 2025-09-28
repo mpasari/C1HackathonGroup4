@@ -166,6 +166,19 @@ from src.utils.pdf_exporter import markdown_to_pdf_bytes
 
 
 
+OPTIONAL_AGENT_OPTIONS = [
+    ("Web Research", "web_researcher"),
+    ("Academic Research", "academic_researcher"),
+    ("News Analysis", "news_analyzer"),
+    ("Social Analysis", "social_analyzer"),
+    ("Financial Analysis", "financial_analyzer"),
+    ("Perplexity Research", "perplexity_researcher"),
+    ("YouTube Research", "youtube_researcher"),
+]
+OPTIONAL_AGENT_LABEL_TO_ID = {label: step_id for label, step_id in OPTIONAL_AGENT_OPTIONS}
+OPTIONAL_AGENT_ID_TO_LABEL = {step_id: label for label, step_id in OPTIONAL_AGENT_OPTIONS}
+OPTIONAL_AGENT_IDS = {step_id for _, step_id in OPTIONAL_AGENT_OPTIONS}
+
 PIPELINE = [
 
 
@@ -298,6 +311,7 @@ SESSION_DEFAULTS = {
 
 
 
+    "selected_agents": ['academic_researcher'],
 }
 
 
@@ -1214,11 +1228,23 @@ controls_col, results_col = st.columns([2, 3], gap='large')
 
 with controls_col:
     topic = st.text_input("Enter the research topic:", "", placeholder="e.g., 'The future of AI in healthcare'", key="topic_input")
+    stored_selection = st.session_state.get("selected_agents")
+    if stored_selection is None:
+        stored_selection = ['academic_researcher']
+    default_labels = [OPTIONAL_AGENT_ID_TO_LABEL.get(step) for step in stored_selection if step in OPTIONAL_AGENT_ID_TO_LABEL]
+    if stored_selection and not default_labels:
+        default_labels = [OPTIONAL_AGENT_ID_TO_LABEL["academic_researcher"]]
+    agent_labels = [label for label, _ in OPTIONAL_AGENT_OPTIONS]
+    selected_labels = st.multiselect("Choose researchers to include:", agent_labels, default=default_labels)
+    selected_agent_steps = [OPTIONAL_AGENT_LABEL_TO_ID[label] for label in selected_labels]
+    st.session_state["selected_agents"] = selected_agent_steps if selected_agent_steps else []
     start_clicked = st.button("Start Research", type="primary")
     progress_container = st.container()
-
 with results_col:
     results_container = st.container()
+
+selected_agent_steps = st.session_state.get("selected_agents", [])
+selected_agent_steps_set = set(selected_agent_steps)
 
 
 
@@ -1321,14 +1347,8 @@ if start_clicked:
 
 
         status_container.subheader("Workflow Progress")
-
-
-
-
-
-        placeholders = {step_id: status_container.empty() for step_id, _, _, _, _ in PIPELINE}
-
-
+        active_pipeline = [entry for entry in PIPELINE if entry[0] not in OPTIONAL_AGENT_IDS or entry[0] in selected_agent_steps_set]
+        placeholders = {step_id: status_container.empty() for step_id, _, _, _, _ in active_pipeline}
 
 
 
@@ -1338,7 +1358,13 @@ if start_clicked:
 
 
 
-        state: Dict[str, Any] = {"topic": topic, "mode": mode_key}
+
+
+
+
+
+
+        state: Dict[str, Any] = {"topic": topic, "mode": mode_key, "selected_agents": selected_agent_steps}
 
 
 
@@ -1356,7 +1382,7 @@ if start_clicked:
 
 
 
-            for step_id, label, func, result_key, show_output in PIPELINE:
+            for step_id, label, func, result_key, show_output in active_pipeline:
 
 
 

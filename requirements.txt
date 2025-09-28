@@ -51,3 +51,4 @@ requests
 # Optional transcription fallback
 openai-whisper
 torch
+ffmpeg

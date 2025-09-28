@@ -1,0 +1,230 @@
+{
+  "topic": "The future of AI in healthcare",
+  "mode": "extended",
+  "selected_agents": [
+    "youtube_researcher"
+  ],
+  "research_plan": "Research plan for topic: The future of AI in healthcare\n- Web research\n- Academic papers\n- News\n- Social sentiment\n- Financial data (if relevant)",
+  "youtube_results": {
+    "sources": [
+      {
+        "name": "video_1",
+        "items": [
+          {
+            "published_date": "2025-09-25T01:41:16Z",
+            "title": "Will AI Replace Human Jobs? The Truth about the Future of Work",
+            "authors": [
+              "VistraLens"
+            ],
+            "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+            "content": null,
+            "source": "https://www.youtube.com/watch?v=hXwwlisz5-w",
+            "pdf_url": null
+          }
+        ],
+        "metadata": {
+          "video_id": "hXwwlisz5-w",
+          "duration": "4:38",
+          "views": "8",
+          "likes": "0",
+          "comments": "0",
+          "language": "unknown",
+          "transcript_path": null,
+          "transcript_source": null,
+          "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+          "debug": [
+            "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+            "whisper: ffmpeg_not_found"
+          ]
+        }
+      },
+      {
+        "name": "video_2",
+        "items": [
+          {
+            "published_date": "2025-09-09T14:39:12Z",
+            "title": "How AI could transform the future of medicine",
+            "authors": [
+              "Washington Post Live"
+            ],
+            "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+            "content": null,
+            "source": "https://www.youtube.com/watch?v=yYMEzptRmiA",
+            "pdf_url": null
+          }
+        ],
+        "metadata": {
+          "video_id": "yYMEzptRmiA",
+          "duration": "1:27:42",
+          "views": "270",
+          "likes": "11",
+          "comments": "0",
+          "language": "unknown",
+          "transcript_path": null,
+          "transcript_source": null,
+          "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+          "debug": [
+            "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+            "whisper: ffmpeg_not_found"
+          ]
+        }
+      },
+      {
+        "name": "video_3",
+        "items": [
+          {
+            "published_date": "2025-08-27T15:03:50Z",
+            "title": "How A.I. is transforming the future of healthcare",
+            "authors": [
+              "WREG News Channel 3"
+            ],
+            "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+            "content": null,
+            "source": "https://www.youtube.com/watch?v=vB8dwh4cOpo",
+            "pdf_url": null
+          }
+        ],
+        "metadata": {
+          "video_id": "vB8dwh4cOpo",
+          "duration": "1:46",
+          "views": "216",
+          "likes": "5",
+          "comments": "2",
+          "language": "unknown",
+          "transcript_path": null,
+          "transcript_source": null,
+          "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+          "debug": [
+            "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+            "whisper: ffmpeg_not_found"
+          ]
+        }
+      },
+      {
+        "name": "video_4",
+        "items": [
+          {
+            "published_date": "2025-07-21T11:01:04Z",
+            "title": "How electronic health record AI is changing medical summaries for doctors and helping patients",
+            "authors": [
+              "American Medical Association (AMA)"
+            ],
+            "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+            "content": null,
+            "source": "https://www.youtube.com/watch?v=chR4bHRCxeo",
+            "pdf_url": null
+          }
+        ],
+        "metadata": {
+          "video_id": "chR4bHRCxeo",
+          "duration": "13:31",
+          "views": "5200",
+          "likes": "118",
+          "comments": "10",
+          "language": "unknown",
+          "transcript_path": null,
+          "transcript_source": null,
+          "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+          "debug": [
+            "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+            "whisper: ffmpeg_not_found"
+          ]
+        }
+      },
+      {
+        "name": "video_5",
+        "items": [
+          {
+            "published_date": "2025-07-07T16:07:51Z",
+            "title": "AI in Healthcare Series: The Future of Personalized Healthcare Technology with Dr. Jessica Mega",
+            "authors": [
+              "Stanford Online"
+            ],
+            "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+            "content": null,
+            "source": "https://www.youtube.com/watch?v=pfbiHmRPmV8",
+            "pdf_url": null
+          }
+        ],
+        "metadata": {
+          "video_id": "pfbiHmRPmV8",
+          "duration": "37:59",
+          "views": "25885",
+          "likes": "718",
+          "comments": "24",
+          "language": "unknown",
+          "transcript_path": null,
+          "transcript_source": null,
+          "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+          "debug": [
+            "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+            "whisper: ffmpeg_not_found"
+          ]
+        }
+      },
+      {
+        "name": "video_6",
+        "items": [
+          {
+            "published_date": "2025-06-12T16:17:33Z",
+            "title": "How AI is reshaping the future of healthcare and medical research",
+            "authors": [
+              "Microsoft Research"
+            ],
+            "summary": "No transcript available (attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found).",
+            "content": null,
+            "source": "https://www.youtube.com/watch?v=N0w9uO7kH80",
+            "pdf_url": null
+          }
+        ],
+        "metadata": {
+          "video_id": "N0w9uO7kH80",
+          "duration": "38:59",
+          "views": "8154",
+          "likes": "216",
+          "comments": "11",
+          "language": "unknown",
+          "transcript_path": null,
+          "transcript_source": null,
+          "transcript_error": "attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript' | ffmpeg_not_found",
+          "debug": [
+            "youtube_api: attr_error: type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'",
+            "whisper: ffmpeg_not_found"
+          ]
+        }
+      }
+    ],
+    "elapsed": 1.2743523120880127,
+    "tokens": 0,
+    "cost": 0.0,
+    "details": {
+      "run_id": "20250928T013442",
+      "chunking_time": 1.2743523120880127,
+      "summary_time": 0.0,
+      "mode": "extended",
+      "video_count": 6,
+      "metadata_path": "C:\\Projects\\Outskill_Hackathon\\C1HackathonGroup4\\data\\youtube\\20250928T013442\\metadata.json"
+    }
+  },
+  "cleanup_result": {
+    "sources": [
+      {
+        "name": "cleanup",
+        "items": [
+          "20250928T013035Z_future_of_ai_in_healthcare.json"
+        ],
+        "metadata": {
+          "directory": "C:\\Projects\\Outskill_Hackathon\\C1HackathonGroup4\\data\\json",
+          "removed_count": 1,
+          "vector_store_cleared": true
+        }
+      }
+    ],
+    "elapsed": 0.029639005661010742,
+    "tokens": 0,
+    "cost": 0.0,
+    "details": {
+      "note": "Removed archives and reset vector store before new run"
+    }
+  }
+}

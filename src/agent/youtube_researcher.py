@@ -61,6 +61,13 @@ def _load_summary_prompt() -> str:
     return _DEFAULT_SUMMARY_PROMPT
 
 
+def _ensure_ffmpeg_available() -> Optional[str]:
+    ffmpeg_path = shutil.which('ffmpeg')
+    if ffmpeg_path is None:
+        logger.warning('FFmpeg not found on PATH; Whisper fallback will be disabled')
+    return ffmpeg_path
+
+
 def _ensure_whisper_model():
     global _whisper_model
     if _whisper_model is not None:
@@ -79,6 +86,9 @@ def _transcribe_with_whisper(video_id: str, video_url: str) -> Tuple[str, str, O
         return "", "", "whisper_not_installed"
     if YoutubeDL is None:
         return "", "", "yt_dlp_not_installed"
+    ffmpeg_path = _ensure_ffmpeg_available()
+    if ffmpeg_path is None:
+        return "", "", "ffmpeg_not_found"
     try:
         model = _ensure_whisper_model()
     except Exception as exc:  # pragma: no cover - defensive
@@ -100,7 +110,11 @@ def _transcribe_with_whisper(video_id: str, video_url: str) -> Tuple[str, str, O
             if audio_file is None:
                 return "", "", "audio_download_failed"
             logger.debug("Transcribing %s via Whisper from %s", video_id, audio_file)
-            result = model.transcribe(str(audio_file), fp16=False)  # type: ignore[call-arg]
+            try:
+                result = model.transcribe(str(audio_file), fp16=False)  # type: ignore[call-arg]
+            except FileNotFoundError as exc:
+                logger.exception("Whisper could not invoke ffmpeg for %s: %s", video_id, exc)
+                return "", "", "ffmpeg_execution_failed"
             text_result = result.get("text") or ""
             text = text_result.strip()
             language = result.get("language") or "unknown"
