@@ -1376,426 +1376,120 @@ if start_clicked:
 
 
 
-        try:
+        progress_log: List[Dict[str, Any]] = []
 
+        for step_id, label, func, result_key, show_output in active_pipeline:
+            placeholder = placeholders[step_id]
 
-
-
-
-            for step_id, label, func, result_key, show_output in active_pipeline:
-
-
-
-
-
-                if step_id == "financial_analyzer" and mode_key == "simple":
-
-
-
-
-
-                    placeholders[step_id].info(f"[SKIPPED] {label} (simple mode)")
-
-
-
-
-
-                    progress_log.append({
-
-
-
-
-
-                        "label": label,
-
-
-
-
-
-                        "status": "skip",
-
-
-
-
-
-                        "reason": "Skipped in simple mode",
-
-
-
-
-
-                    })
-
-
-
-
-
-                    st.session_state["stored_progress"] = progress_log.copy()
-
-
-
-
-
-                    continue
-
-
-
-
-
-
-
-
-
-
-
-                placeholders[step_id].info(f"[RUNNING] {label}")
-
-
-
-
-
-                start_time = time.time()
-
-
-
-
-
-                result = func(state)
-
-
-
-
-
-                if result:
-
-
-
-
-
-                    state.update(result)
-
-
-
-
-
-                elapsed = time.time() - start_time
-
-
-
-
-
-
-
-
-
-
-
-                value = state.get(result_key)
-
-
-
-
-
-                output_text = show_agent_result(value) if show_output else ""
-
-
-
-
-
-                metrics = format_agent_metrics(value)
-
-
-
-
-
-                details = " | ".join(filter(None, [metrics, f"Step time: {elapsed:.2f}s"]))
-
-
-
-
-
-                note = None
-
-
-
-
-
-                if step_id == "data_archiver" and isinstance(state.get("archive_path"), str):
-
-
-
-
-
-                    note = f"Results archived at: {state['archive_path']}"
-
-
-
-
-
-
-
-
-
-
-
-                container = placeholders[step_id].container()
-
-
-
-
-
-                container.success(f"[DONE] {label}")
-
-
-
-
-
-                if details:
-
-
-
-
-
-                    container.caption(details)
-
-
-
-
-
-                if note:
-
-
-
-
-
-                    container.caption(note)
-
-
-
-
-
-                if output_text:
-
-
-
-
-
-                    with container.expander("Details", expanded=False):
-
-
-
-
-
-                        st.text(output_text)
-
-
-
-
-
+            if step_id == "financial_analyzer" and mode_key == "simple":
+                placeholder.info(f"[SKIPPED] {label} (simple mode)")
                 progress_log.append({
-
-
-
-
-
                     "label": label,
-
-
-
-
-
-                    "status": "success",
-
-
-
-
-
-                    "details": details,
-
-
-
-
-
-                    "note": note,
-
-
-
-
-
-                    "output": output_text or "",
-
-
-
-
-
-                    "elapsed": elapsed,
-
-
-
-
-
+                    "status": "skip",
+                    "reason": "Skipped in simple mode",
                 })
-
-
-
-
-
                 st.session_state["stored_progress"] = progress_log.copy()
-
-
-
-
-
-        except Exception as exc:
-
-
-
-
-
-            progress_log.append({"label": label, "status": "error", "error": str(exc)})
-
-
-
-
-
-            st.session_state["stored_progress"] = progress_log
-
-
-
-
-
-            err_placeholder = placeholders.get(step_id)
-
-
-
-
-
-            if err_placeholder is not None:
-
-
-
-
-
-                with err_placeholder.container():
-
-
-
-
-
-                    st.error(f"[ERROR] {label}")
-
-
-
-
-
-                    st.caption(str(exc))
-
-
-
-
-
-            st.error(f"An error occurred: {exc}")
-
-
-
-
-
-        else:
-
-
-
-
-
-            st.session_state["stored_progress"] = progress_log
-
-
-
-
-
-            st.session_state["last_state"] = state
-
-
-
-
-
-            totals = aggregate_totals(state)
-
-
-
-
-
-            st.session_state["last_totals"] = totals
-
-
-
-
-
-            update_run_statistics()
-
-
-
-
-
-
-
-
-
-
-
-            report = state.get("final_report", "")
-
-
-
-
-
-            if report:
-
-
-
-
-
-                st.session_state["last_report"] = report
-
-
-
-
-
-                st.session_state["last_pdf"] = markdown_to_pdf_bytes(report, title=f"Research Report: {topic}")
-
-
-
-
-
+                continue
+
+            placeholder.info(f"[RUNNING] {label}")
+            start_time = time.time()
+            try:
+                result = func(state)
+                if result:
+                    state.update(result)
+            except Exception as exc:
+                elapsed = time.time() - start_time
+                container = placeholder.container()
+                container.error(f"[ERROR] {label}")
+                container.caption(str(exc))
+                progress_log.append({
+                    "label": label,
+                    "status": "error",
+                    "error": str(exc),
+                    "elapsed": elapsed,
+                })
+                st.session_state["stored_progress"] = progress_log.copy()
+                st.error(f"[ERROR] {label}: {exc}")
+                continue
+
+            elapsed = time.time() - start_time
+            value = state.get(result_key)
+            output_text = show_agent_result(value) if show_output else ""
+            metrics_text = format_agent_metrics(value)
+            details = " | ".join(filter(None, [metrics_text, f"Step time: {elapsed:.2f}s"]))
+            note = None
+            if step_id == "data_archiver" and isinstance(state.get("archive_path"), str):
+                note = f"Results archived at: {state['archive_path']}"
+
+            error_text = None
+            if isinstance(value, dict):
+                details_dict = value.get("details") or {}
+                if isinstance(details_dict, dict):
+                    error_text = details_dict.get("error")
+
+            container = placeholder.container()
+            if error_text:
+                container.error(f"[ERROR] {label}")
+                container.caption(error_text)
+                if details:
+                    container.caption(details)
+                if note:
+                    container.caption(note)
+                if output_text:
+                    with container.expander("Details", expanded=False):
+                        st.text(output_text)
+                progress_log.append({
+                    "label": label,
+                    "status": "error",
+                    "details": details,
+                    "note": note,
+                    "output": output_text or "",
+                    "elapsed": elapsed,
+                    "error": error_text,
+                })
+                st.error(f"[ERROR] {label}: {error_text}")
             else:
+                container.success(f"[DONE] {label}")
+                if details:
+                    container.caption(details)
+                if note:
+                    container.caption(note)
+                if output_text:
+                    with container.expander("Details", expanded=False):
+                        st.text(output_text)
+                progress_log.append({
+                    "label": label,
+                    "status": "success",
+                    "details": details,
+                    "note": note,
+                    "output": output_text or "",
+                    "elapsed": elapsed,
+                })
+            st.session_state["stored_progress"] = progress_log.copy()
 
+        st.session_state["stored_progress"] = progress_log
+        st.session_state["last_state"] = state
+        totals = aggregate_totals(state)
+        st.session_state["last_totals"] = totals
+        update_run_statistics()
 
-
-
-
-                st.session_state["last_report"] = ""
-
-
-
-
-
-                st.session_state["last_pdf"] = None
-
-
-
-
-
-
-
-
-
-
-
+        report = state.get("final_report", "")
+        synth_details: Dict[str, Any] = {}
+        synth_result = state.get("synthesizer_result")
+        if isinstance(synth_result, dict):
+            synth_details = synth_result.get("details") or {}
+        if report:
+            st.session_state["last_report"] = report
+            st.session_state["last_pdf"] = markdown_to_pdf_bytes(report, title=f"Research Report: {topic}")
             st.success("Workflow completed successfully.")
-
-
-
-
-
+        else:
+            st.session_state["last_report"] = ""
+            st.session_state["last_pdf"] = None
+            error_text = synth_details.get("error") if isinstance(synth_details, dict) else None
+            if error_text:
+                st.error(f"Final report not generated: {error_text}")
+            else:
+                st.warning("Final report not generated.")
 else:
 
 

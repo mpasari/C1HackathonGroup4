@@ -5,7 +5,18 @@ import json
 import os
 
 from src.graph.state import ResearchState
-from src.utils.llm_registry import invoke_llm
+from src.utils.llm_registry import invoke_llm, zero_metrics
+
+
+MAX_PROMPT_CHARS_EXTENDED = 65000
+MAX_PROMPT_CHARS_SIMPLE = 20000
+
+def _truncate_agent_outputs(text: str, max_chars: int) -> tuple[str, bool]:
+    if len(text) <= max_chars:
+        return text, False
+    slice_len = max_chars // 2
+    truncated = text[:slice_len] + "\n\n... [truncated for length] ...\n\n" + text[-slice_len:]
+    return truncated, True
 
 
 def load_synthesizer_prompt(mode: str = "extended") -> str:
@@ -52,18 +63,49 @@ def generate_final_report(state: ResearchState, mode: str = "extended") -> dict:
     prompt_template = load_synthesizer_prompt(mode)
     topic = state.get("topic", "")
     agent_outputs = gather_agent_outputs(state)
+    max_chars = MAX_PROMPT_CHARS_SIMPLE if mode == "simple" else MAX_PROMPT_CHARS_EXTENDED
+    agent_outputs, prompt_truncated = _truncate_agent_outputs(agent_outputs, max_chars)
     prompt = prompt_template.format(topic=topic, agent_outputs=agent_outputs)
 
     temperature = 0.0 if mode == "simple" else 0.2
-    response, metrics = invoke_llm("synthesiser", prompt, temperature=temperature)
-    report = response.content.strip()
+    try:
+        response, metrics = invoke_llm("synthesiser", prompt, temperature=temperature)
+        report = response.content.strip()
+    except Exception as exc:
+        metrics = zero_metrics("synthesiser")
+        result_payload = {
+            "sources": [
+                {
+                    "name": "synthesizer",
+                    "items": [],
+                    "metadata": {"note": "Final report generation failed"},
+                }
+            ],
+            "elapsed": metrics.duration,
+            "tokens": metrics.total_tokens,
+            "cost": metrics.cost,
+            "details": {
+                "model": metrics.model,
+                "prompt_tokens": metrics.prompt_tokens,
+                "completion_tokens": metrics.completion_tokens,
+                "truncated": metrics.truncated,
+                "prompt_chars": len(agent_outputs),
+                "prompt_truncated": prompt_truncated,
+                "error": str(exc),
+            },
+        }
+        return {"synthesizer_result": result_payload}
+
+    metadata_note = "See final report text"
+    if prompt_truncated:
+        metadata_note = "Prompt truncated to fit context window"
 
     result_payload = {
         "sources": [
             {
                 "name": "synthesizer",
                 "items": [],
-                "metadata": {"note": "See final report text"},
+                "metadata": {"note": metadata_note},
             }
         ],
         "elapsed": metrics.duration,
@@ -74,6 +116,8 @@ def generate_final_report(state: ResearchState, mode: str = "extended") -> dict:
             "prompt_tokens": metrics.prompt_tokens,
             "completion_tokens": metrics.completion_tokens,
             "truncated": metrics.truncated,
+            "prompt_chars": len(agent_outputs),
+            "prompt_truncated": prompt_truncated,
         },
     }
 

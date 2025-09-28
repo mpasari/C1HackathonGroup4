@@ -1,6 +1,6 @@
 ﻿<div align="center">
 
-# ?? Agentic Deep Research Platform
+# 🧠 Illuminous - Agentic Deep Research Platform
 
 Advanced multi-agent research assistant orchestrating web, academic, news, social, financial, YouTube, and Perplexity-powered investigations into one cohesive report.
 
@@ -13,7 +13,7 @@ Advanced multi-agent research assistant orchestrating web, academic, news, socia
 
 ---
 
-## ?? Table of Contents
+## 🗺️ Table of Contents
 - [Overview](#overview)
 - [Key Capabilities](#key-capabilities)
 - [Architecture](#architecture)
@@ -38,12 +38,12 @@ Advanced multi-agent research assistant orchestrating web, academic, news, socia
 
 ---
 
-## ?? Overview
+## 📦 Overview
 Agentic Deep Research Platform is a Streamlit application backed by LangGraph that deploys a team of specialized agents. Each agent handles a research vertical (web, academic papers, news, social sentiment, finance, Perplexity deep search, and YouTube video summarization). Outputs are normalized, optionally embedded into LanceDB for semantic retrieval, and synthesized by an LLM into a polished report (Markdown + PDF).
 
 ---
 
-## ?? Key Capabilities
+## ✨ Key Capabilities
 - ?? **Dynamic Agent Selection** – Toggle the research modules you need at run time.
 - ?? **Parallel Retrieval** – Web, news, academic, social, financial, Perplexity, and YouTube agents fan out concurrently.
 - ?? **LLM Orchestration** – GPT-4o powers synthesis, finance intent detection, and YouTube summarization.
@@ -53,14 +53,14 @@ Agentic Deep Research Platform is a Streamlit application backed by LangGraph th
 
 ---
 
-## ??? Architecture
+## 🏛️ Architecture
 
 ![System Architecture](docs/system-architecture.png)
 
 ---
 
 
-## ?? Agent Workflow
+## 🧩 Agent Workflow
 1. **orchestrator** – Crafts research plan and determines which branches execute.
 2. **Parallel agents** – Gather data from their respective domains.
 3. **cleanup** – Clears previous archives/vector store to avoid cross-run contamination.
@@ -71,7 +71,7 @@ Agentic Deep Research Platform is a Streamlit application backed by LangGraph th
 
 ---
 
-## ? Features
+## ✅ Features
 - ? Domain-specific prompt templates for synthesizer, Perplexity, and YouTube summarization.
 - ? Token/cost tracking for every LLM invocation via centralized registry.
 - ? Real-time workflow dashboard with detailed metrics.
@@ -80,7 +80,7 @@ Agentic Deep Research Platform is a Streamlit application backed by LangGraph th
 
 ---
 
-## ?? Technology Stack
+## 📚 Technology Stack
 - **Frontend**: Streamlit 1.30+
 - **Workflow**: LangGraph 0.0.58
 - **LLM Provider**: OpenRouter (GPT-4o, GPT-4o-mini, o1-mini, Gemini)
@@ -91,7 +91,7 @@ Agentic Deep Research Platform is a Streamlit application backed by LangGraph th
 
 ---
 
-## ? Prerequisites
+## 📋 Prerequisites
 - Python 3.10+
 - pip / virtualenv
 - FFmpeg (only if Whisper fallback enabled)
@@ -99,7 +99,7 @@ Agentic Deep Research Platform is a Streamlit application backed by LangGraph th
 
 ---
 
-## ??? Installation
+## 🛠️ Installation
 `ash
 git clone https://github.com/<your-org>/agentic-deep-research.git
 cd agentic-deep-research
@@ -111,7 +111,7 @@ pip install -r requirements.txt
 
 ---
 
-## ?? Configuration
+## ⚙️ Configuration
 1. Copy .env.example ? .env
 2. Populate the necessary API keys (table below). Any blank key gracefully disables the related feature.
 3. (Optional) Enable Whisper fallback:
@@ -123,7 +123,7 @@ pip install -r requirements.txt
 
 ---
 
-## ?? API Keys
+## 🔑 API Keys
 | Service            | Env Variable(s)                             | Required | Notes |
 |--------------------|----------------------------------------------|----------|-------|
 | OpenRouter (LLMs)  | OPENROUTER_API_KEY                         | ?       | Primary LLM provider |
@@ -142,7 +142,7 @@ pip install -r requirements.txt
 
 ---
 
-## ?? Running the Application
+## ▶️ Running the Application
 `ash
 streamlit run app.py
 `
@@ -220,7 +220,7 @@ agentic-deep-research/
 
 ---
 
-## 🛠️ Troubleshooting
+## 🔮 Troubleshooting
 | Issue                                   | Resolution |
 |----------------------------------------|------------|
 | FFmpeg warnings / no YouTube transcripts | Install ffmpeg and ensure it’s on PATH; Whisper fallback depends on it |
@@ -240,23 +240,23 @@ agentic-deep-research/
 
 ---
 
-## ?? License
+## 📜 License
 This project is released under the [MIT License](LICENSE).
 
 ---
 
-## ?? Acknowledgements
+## 🙏 Acknowledgements
 Huge thanks to the maintainers of LangChain, LangGraph, LanceDB, Sentence Transformers, Whisper, OpenRouter, and the data/API providers (Perplexity, Tavily, SearchAPI.io, NewsAPI, Twitter, Finnhub, Alpha Vantage, Google, YouTube) that enable this research experience.
 
 ---
 
-## ?? Contact
+## 📬 Contact
 **Team Outskill Hackathon Group 4**  
 - Shankar — lead2shankar@gmail.com  
 - Sanjay — karwasanjay007@gmail.com  
 - Imran — imranh0505@gmail.com  
 - Shaibi — shaibis@gmail.com  
-- Mrinal — mpasari@gmail.com  
+- Mrinal Pasari — mpasari@gmail.com  | https://www.linkedin.com/in/mrinalpasari/
 - Anmol — anmol.mailme@gmail.com  
 
 Let us know if you have feature ideas, encounter issues, or want to collaborate!

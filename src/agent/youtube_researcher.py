@@ -34,6 +34,10 @@ from src.utils.structured_data import build_structured_record
 DATA_DIR = Path(__file__).resolve().parents[2] / "data" / "youtube"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+_FFMPEG_PATH_HINT = os.getenv("FFMPEG_BIN")
+if _FFMPEG_PATH_HINT and _FFMPEG_PATH_HINT not in os.environ.get("PATH", ""):
+    os.environ["PATH"] = os.environ.get("PATH", "") + os.pathsep + _FFMPEG_PATH_HINT
+
 logger = logging.getLogger(__name__)
 
 _PUBLISHED_AFTER_DAYS = 365
@@ -63,10 +67,13 @@ def _load_summary_prompt() -> str:
 
 
 def _ensure_ffmpeg_available() -> Optional[str]:
-    """Return the ffmpeg executable path if it can be resolved on PATH."""
-    ffmpeg_path = shutil.which('ffmpeg')
+    """Return the ffmpeg path if available, suggesting FFMPEG_BIN otherwise."""
+    ffmpeg_path = shutil.which("ffmpeg") or shutil.which("ffmpeg.exe")
     if ffmpeg_path is None:
-        logger.warning('FFmpeg not found on PATH; Whisper fallback will be disabled')
+        if _FFMPEG_PATH_HINT:
+            logger.warning("FFmpeg not found on PATH even after appending FFMPEG_BIN=%s", _FFMPEG_PATH_HINT)
+        else:
+            logger.warning("FFmpeg not found on PATH; set FFMPEG_BIN env variable or install ffmpeg")
     return ffmpeg_path
 
 
@@ -464,5 +471,4 @@ def analyze_youtube(state: ResearchState) -> Dict[str, Dict]:
             },
         }
     }
-
 
