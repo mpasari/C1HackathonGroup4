@@ -16,6 +16,7 @@ from src.agent.vector_pipeline import store_in_vector_db, retrieve_from_vector_d
 from src.agent.synthesizer import generate_final_report
 
 
+# Mapping between conditional branch names and agent node identifiers.
 PARALLEL_BRANCHES = {
     "parallel_web": "web_researcher",
     "parallel_academic": "academic_researcher",
@@ -27,13 +28,18 @@ PARALLEL_BRANCHES = {
 }
 
 
-def orchestrator_fan_out(_state: ResearchState):
-    """Return branch keys to run research agents in parallel."""
+def orchestrator_fan_out(state: ResearchState) -> list[str]:
+    """Return branch keys for the selected research agents in *state*."""
+    selected = state.get("selected_agents") or []
+    if selected:
+        branches = [name for name, agent in PARALLEL_BRANCHES.items() if agent in selected]
+        if branches:
+            return branches
     return list(PARALLEL_BRANCHES.keys())
 
 
 def build_graph():
-    """Compile the research workflow graph with parallel research agents."""
+    """Compile the research workflow graph with conditional parallel branches."""
     workflow = StateGraph(ResearchState)
 
     workflow.add_node("orchestrator", create_research_plan)

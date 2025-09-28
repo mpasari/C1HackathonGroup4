@@ -29,6 +29,7 @@ _PERPLEXITY_SOURCE = "https://www.perplexity.ai"
 
 @lru_cache(maxsize=1)
 def _load_prompt_template() -> str:
+    """Load the Perplexity system prompt template from disk."""
     if _PROMPT_PATH.exists():
         return _PROMPT_PATH.read_text(encoding="utf-8")
     if _DEFAULT_PROMPT_PATH.exists():
@@ -39,6 +40,7 @@ def _load_prompt_template() -> str:
 
 
 def _normalize_domain(value: str | None) -> str:
+    """Map user-supplied domain names to Perplexity's supported categories."""
     if not value:
         return "general"
     key = value.strip().lower()
@@ -48,12 +50,14 @@ def _normalize_domain(value: str | None) -> str:
 
 
 def _build_system_prompt(domain: str) -> str:
+    """Insert the domain-specific focus string into the system prompt template."""
     template = _load_prompt_template()
     focus = PerplexityClient.SUPPORTED_DOMAINS.get(domain, PerplexityClient.SUPPORTED_DOMAINS["general"])
     return template.format(domain_focus=focus)
 
 
 def _build_overview_item(topic: str, sections: Dict[str, Any], content: str) -> Dict[str, Any]:
+    """Construct the primary summary record shown to downstream agents."""
     summary = sections.get("summary") or None
     analysis = sections.get("analysis") or content
     return build_structured_record(
@@ -65,6 +69,7 @@ def _build_overview_item(topic: str, sections: Dict[str, Any], content: str) -> 
 
 
 def _build_citation_items(citations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Normalise Perplexity citation metadata into structured records."""
     items: List[Dict[str, Any]] = []
     for citation in citations:
         title = citation.get("title") or citation.get("url") or "Perplexity Source"
@@ -83,6 +88,7 @@ def _build_citation_items(citations: List[Dict[str, Any]]) -> List[Dict[str, Any
 
 
 def _sections_metadata(sections: Dict[str, Any]) -> Dict[str, Any]:
+    """Extract supporting metadata derived from the Perplexity section parsing."""
     return {
         "key_findings": sections.get("findings") or [],
         "insights": sections.get("insights") or [],

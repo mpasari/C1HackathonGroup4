@@ -21,6 +21,7 @@ from reportlab.platypus import (
 
 
 def _format_inline(text: str) -> str:
+    """Convert markdown emphasis markers into simple reportlab markup."""
     escaped = escape(text)
     escaped = re.sub(r"\*\*(.+?)\*\*", r"<b>\\1</b>", escaped)
     escaped = re.sub(r"\*(.+?)\*", r"<i>\\1</i>", escaped)

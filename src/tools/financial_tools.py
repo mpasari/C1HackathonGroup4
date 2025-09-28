@@ -1,13 +1,15 @@
-﻿# This module provides tools for financial news and intent detection using APIs and LLMs.
-import os
-import requests
-from datetime import datetime
-from typing import Tuple
+"""Financial data helper functions used by the research agents."""
+from __future__ import annotations
 
-from src.utils.llm_registry import invoke_llm, zero_metrics, LLMCallMetrics
+import os
+from datetime import datetime
+from typing import List, Tuple
+
+import requests
+
+from src.utils.llm_registry import LLMCallMetrics, invoke_llm, zero_metrics
 from src.utils.structured_data import build_structured_record
 
-# API keys for Finnhub and Alpha Vantage are loaded from environment variables.
 FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY")
 ALPHAVANTAGE_API_KEY = os.getenv("ALPHAVANTAGE_API_KEY")
 
@@ -18,7 +20,8 @@ with open(_PROMPT_PATH, "r", encoding="utf-8") as prompt_file:
     FINANCE_INTENT_PROMPT = prompt_file.read()
 
 
-def _format_epoch(value):
+def _format_epoch(value: object) -> str | None:
+    """Convert numeric epoch values to ISO 8601 strings when possible."""
     try:
         return datetime.utcfromtimestamp(float(value)).isoformat() + "Z"
     except Exception:
@@ -26,7 +29,7 @@ def _format_epoch(value):
 
 
 def is_financial_intent(topic: str) -> Tuple[bool, LLMCallMetrics]:
-    """Return (decision, metrics) for finance intent detection."""
+    """Use the finance intent checker to determine if a topic warrants financial lookups."""
     prompt = FINANCE_INTENT_PROMPT.format(query=topic)
     try:
         response, metrics = invoke_llm("finance_intent_checker", prompt)
@@ -34,7 +37,7 @@ def is_financial_intent(topic: str) -> Tuple[bool, LLMCallMetrics]:
         return answer.startswith("yes"), metrics
     except Exception:
         metrics = zero_metrics("finance_intent_checker")
-        finance_keywords = [
+        finance_keywords: List[str] = [
             "stock",
             "finance",
             "market",
@@ -68,40 +71,37 @@ def is_financial_intent(topic: str) -> Tuple[bool, LLMCallMetrics]:
         return any(word in topic_lower for word in finance_keywords), metrics
 
 
-def get_finnhub_news(symbol: str, from_date: str, to_date: str):
-    """
-    Fetches company news from Finnhub for a given symbol and date range.
-    Returns a list of news item dicts.
-    """
+def get_finnhub_news(symbol: str, from_date: str, to_date: str) -> List[dict]:
+    """Return company news from Finnhub for the supplied ticker and date range."""
     if not FINNHUB_API_KEY:
         return []
-    url = f"https://finnhub.io/api/v1/company-news?symbol={symbol}&from={from_date}&to={to_date}&token={FINNHUB_API_KEY}"
-    resp = requests.get(url)
+    url = (
+        "https://finnhub.io/api/v1/company-news"
+        f"?symbol={symbol}&from={from_date}&to={to_date}&token={FINNHUB_API_KEY}"
+    )
+    resp = requests.get(url, timeout=10)
     if resp.status_code == 200:
         return resp.json()
     return []
 
 
-def get_alphavantage_news(symbol: str):
-    """
-    Fetches news sentiment from Alpha Vantage for a given symbol.
-    Returns a list of news item dicts.
-    """
+def get_alphavantage_news(symbol: str) -> List[dict]:
+    """Return news sentiment from Alpha Vantage for the supplied ticker."""
     if not ALPHAVANTAGE_API_KEY:
         return []
-    url = f"https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers={symbol}&apikey={ALPHAVANTAGE_API_KEY}"
-    resp = requests.get(url)
+    url = (
+        "https://www.alphavantage.co/query"
+        f"?function=NEWS_SENTIMENT&tickers={symbol}&apikey={ALPHAVANTAGE_API_KEY}"
+    )
+    resp = requests.get(url, timeout=10)
     if resp.status_code == 200:
         data = resp.json()
         return data.get("feed", [])
     return []
 
 
-def get_financial_news(topic: str, symbol: str = None):
-    """
-    Returns combined structured news from Finnhub and Alpha Vantage for a given stock symbol or topic.
-    Each item contains published date, title, authors, summary, content, source, and pdf_url.
-    """
+def get_financial_news(topic: str, symbol: str | None = None) -> List[dict]:
+    """Combine structured news items from Finnhub and Alpha Vantage for a topic/ticker."""
     import datetime as _dt
 
     today = _dt.date.today()

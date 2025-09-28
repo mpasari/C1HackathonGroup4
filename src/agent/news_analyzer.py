@@ -1,19 +1,22 @@
-﻿import time
+"""News aggregation agent that consolidates headlines and metadata."""
+from __future__ import annotations
+
+import time
 from typing import Any, Dict, List
 
-# This module defines the news analyzer agent, which retrieves and summarizes news articles for a topic.
-from src.utils.llm_registry import get_llm
 from langchain_community.embeddings import HuggingFaceEmbeddings
+
 from src.graph.state import ResearchState
 from src.tools.news_tools import news_api_tool, news_search
+from src.utils.llm_registry import get_llm
 from src.utils.structured_data import build_structured_record
 
-# LLM and embeddings are initialized for possible use in summarization or advanced features.
 llm = get_llm("research_assistant")
 embeddings = HuggingFaceEmbeddings()
 
 
 def _normalize_results(results: Any, limit: int) -> List[Any]:
+    """Coerce tool output into a list bounded by *limit* entries."""
     if isinstance(results, list):
         return results[:limit]
     if isinstance(results, str):
@@ -22,6 +25,7 @@ def _normalize_results(results: Any, limit: int) -> List[Any]:
 
 
 def _structure_item(item: Any) -> Dict[str, Any]:
+    """Convert heterogeneous news items into the unified research record shape."""
     if isinstance(item, dict):
         title = item.get("title") or item.get("name")
         summary = item.get("summary") or item.get("description") or item.get("snippet")
@@ -56,10 +60,12 @@ def _structure_item(item: Any) -> Dict[str, Any]:
 
 
 def _structure_items(items: List[Any]) -> List[Dict[str, Any]]:
+    """Vectorised helper that applies ``_structure_item`` to all *items*."""
     return [_structure_item(item) for item in items]
 
 
-def _fetch_results(tool, query: str, limit: int) -> Dict[str, Any]:
+def _fetch_results(tool: Any, query: str, limit: int) -> Dict[str, Any]:
+    """Execute *tool* safely, returning structured items and any error details."""
     try:
         raw = tool.run(query)
         normalized = _normalize_results(raw, limit)
@@ -69,22 +75,19 @@ def _fetch_results(tool, query: str, limit: int) -> Dict[str, Any]:
 
 
 def analyze_news(state: ResearchState) -> dict:
-    """
-    The news analyzer agent retrieves news articles for the given topic using NewsAPI or DuckDuckGo.
-    Returns a dictionary with raw tool outputs and metadata.
-    """
+    """Surface current headlines for *state* using NewsAPI when available."""
     start = time.time()
-    topic = state['topic']
-    mode = state.get('mode', 'extended')
-    num_items = 2 if mode == 'simple' else 10
+    topic = state.get("topic", "")
+    mode = state.get("mode", "extended")
+    num_items = 2 if mode == "simple" else 10
 
     if news_api_tool:
         primary_tool = news_api_tool
-        primary_name = 'news_api'
+        primary_name = "news_api"
         query = topic
     else:
         primary_tool = news_search
-        primary_name = 'duckduckgo_news'
+        primary_name = "duckduckgo_news"
         query = f"news {topic}"
 
     payload = _fetch_results(primary_tool, query, num_items)
@@ -112,5 +115,3 @@ def analyze_news(state: ResearchState) -> dict:
             "details": {"mode": mode, "topic": topic},
         }
     }
-
-

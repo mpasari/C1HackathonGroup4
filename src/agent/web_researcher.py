@@ -1,14 +1,16 @@
-﻿import time
+"""Web search agent that aggregates results from multiple tooling providers."""
+from __future__ import annotations
+
+import time
 from typing import Any, Dict, List
 
-# This module defines the web researcher agent, which performs web searches using multiple tools.
 from src.graph.state import ResearchState
 from src.tools.web_search_tools import duckduckgo_search, serpapi_search, tavily_search
 from src.utils.structured_data import build_structured_record
 
 
 def _normalize_results(results: Any, limit: int) -> List[Any]:
-    """Normalize tool output to a list of items limited to the requested count."""
+    """Coerce tool output into a bounded list for downstream structuring."""
     if isinstance(results, list):
         return results[:limit]
     if isinstance(results, str):
@@ -17,6 +19,7 @@ def _normalize_results(results: Any, limit: int) -> List[Any]:
 
 
 def _structure_item(item: Any) -> Dict[str, Any]:
+    """Convert a raw search item into the unified research record schema."""
     if isinstance(item, dict):
         title = item.get("title") or item.get("name") or item.get("headline")
         summary = item.get("summary") or item.get("snippet") or item.get("description")
@@ -59,11 +62,12 @@ def _structure_item(item: Any) -> Dict[str, Any]:
 
 
 def _structure_items(items: List[Any]) -> List[Dict[str, Any]]:
+    """Vectorised helper that applies ``_structure_item`` to every entry."""
     return [_structure_item(item) for item in items]
 
 
 def _fetch_tool_results(tool: Any, topic: str, limit: int) -> Dict[str, Any]:
-    """Run the tool safely and capture raw results or error metadata."""
+    """Execute a tool safely and wrap its response in a predictable contract."""
     if not tool:
         return {"items": [], "error": "tool_unavailable"}
     try:
@@ -75,6 +79,7 @@ def _fetch_tool_results(tool: Any, topic: str, limit: int) -> Dict[str, Any]:
 
 
 def _build_source_payload(name: str, payload: Dict[str, Any], limit: int) -> Dict[str, Any]:
+    """Attach metadata describing the tool invocation to structured items."""
     items = payload.get("items", [])
     metadata: Dict[str, Any] = {"limit": limit, "item_count": len(items)}
     if "error" in payload:
@@ -83,11 +88,7 @@ def _build_source_payload(name: str, payload: Dict[str, Any], limit: int) -> Dic
 
 
 def research_web(state: ResearchState, mode: str = "extended") -> dict:
-    """
-    The web researcher agent performs a web search for the given topic using available tools (SerpAPI, Tavily, DuckDuckGo).
-    The number of results per tool is determined by the mode: 'simple' (2 items/tool) or 'extended' (10 items/tool).
-    Returns a dictionary with raw tool outputs and metadata.
-    """
+    """Collect web search results from enabled providers for the supplied *state*."""
     start = time.time()
     topic = state.get("topic", "")
     mode_value = state.get("mode", mode)
@@ -112,5 +113,3 @@ def research_web(state: ResearchState, mode: str = "extended") -> dict:
             "details": {"mode": mode_value, "topic": topic},
         }
     }
-
-

@@ -1,20 +1,19 @@
-﻿import time
-from typing import Any, Dict, List
+"""Social sentiment agent that wraps Twitter lookups."""
+from __future__ import annotations
 
-# This module defines the social analyzer agent, which analyzes social sentiment using Twitter data.
+import time
+from typing import Dict
+
 from src.graph.state import ResearchState
 from src.tools.social_tools import twitter_search
 
 
 def analyze_social(state: ResearchState) -> dict:
-    """
-    The social analyzer agent analyzes social sentiment for the given topic using the Twitter API.
-    Returns a dictionary with raw tweet data and metadata.
-    """
+    """Collect recent tweets for *state* and package them for downstream use."""
     start = time.time()
     topic = state.get("topic", "")
-    mode = state.get('mode', 'extended')
-    num_items = 2 if mode == 'simple' else 10
+    mode = state.get("mode", "extended")
+    num_items = 2 if mode == "simple" else 10
     tweets = twitter_search(topic, max_results=num_items)
 
     elapsed = time.time() - start
@@ -37,4 +36,3 @@ def analyze_social(state: ResearchState) -> dict:
             "details": {"mode": mode, "topic": topic},
         }
     }
-

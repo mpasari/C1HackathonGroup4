@@ -1,18 +1,18 @@
-﻿# This module provides tools for retrieving social sentiment and tweets using the Twitter API.
+"""Social media scraping helpers for sentiment analysis."""
+from __future__ import annotations
+
 import os
+from typing import List
+
 import requests
 
 from src.utils.structured_data import build_structured_record
 
-# Twitter API bearer token is loaded from environment variables.
 TWITTER_BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN")
 
 
-def twitter_search(query, max_results=10):
-    """
-    Searches recent tweets using Twitter API v2 for a given query string.
-    Returns a list of structured tweet records (up to max_results).
-    """
+def twitter_search(query: str, max_results: int = 10) -> List[dict]:
+    """Return recent tweets for a query as structured research records."""
     if not TWITTER_BEARER_TOKEN:
         return []
     url = "https://api.twitter.com/2/tweets/search/recent"
@@ -24,7 +24,7 @@ def twitter_search(query, max_results=10):
         "expansions": "author_id",
         "user.fields": "name,username",
     }
-    resp = requests.get(url, headers=headers, params=params)
+    resp = requests.get(url, headers=headers, params=params, timeout=10)
     if resp.status_code != 200:
         return []
 

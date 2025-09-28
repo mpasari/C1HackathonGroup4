@@ -1,12 +1,15 @@
-﻿import time
+"""Financial analysis agent that conditionally gathers market news."""
+from __future__ import annotations
+
+import time
 from typing import Any, Dict, List
 
-# This module defines the financial analyzer agent, which retrieves financial news if the topic is finance-related.
 from src.graph.state import ResearchState
-from src.tools.financial_tools import is_financial_intent, get_financial_news
+from src.tools.financial_tools import get_financial_news, is_financial_intent
 
 
 def _normalize_results(results: Any, limit: int) -> List[Any]:
+    """Ensure the returned collection is a list capped at *limit* entries."""
     if isinstance(results, list):
         return results[:limit]
     if isinstance(results, str):
@@ -15,14 +18,11 @@ def _normalize_results(results: Any, limit: int) -> List[Any]:
 
 
 def analyze_financial(state: ResearchState) -> dict:
-    """
-    The financial analyzer agent retrieves financial news for the given topic if financial intent is detected.
-    Returns a dictionary with raw financial news items and metadata.
-    """
+    """Run finance-intent detection and gather market headlines when appropriate."""
     start = time.time()
     topic = state.get("topic", "")
-    mode = state.get('mode', 'extended')
-    num_items = 2 if mode == 'simple' else 10
+    mode = state.get("mode", "extended")
+    num_items = 2 if mode == "simple" else 10
 
     intent_detected, intent_metrics = is_financial_intent(topic)
     items: List[Any] = []
@@ -65,4 +65,3 @@ def analyze_financial(state: ResearchState) -> dict:
             },
         }
     }
-

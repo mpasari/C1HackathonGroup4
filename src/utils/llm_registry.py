@@ -129,6 +129,7 @@ _LLM_CONFIGS: Dict[str, LLMConfig] = {
 
 
 def get_llm_config(name: str) -> LLMConfig:
+    """Return the registered configuration for *name* or raise if unknown."""
     if name not in _LLM_CONFIGS:
         raise KeyError(f"Unknown LLM config '{name}'")
     return _LLM_CONFIGS[name]
@@ -136,6 +137,7 @@ def get_llm_config(name: str) -> LLMConfig:
 
 @lru_cache(maxsize=None)
 def _build_client(model: str, temperature: float) -> ChatOpenAI:
+    """Construct and cache a chat client for the given OpenRouter model."""
     return ChatOpenAI(
         model=model,
         temperature=temperature,
@@ -152,6 +154,7 @@ def get_llm(name: str, **overrides: Any) -> ChatOpenAI:
 
 
 def _get_encoder(model: str):
+    """Return a tokenizer encoding for *model*, caching the lookup."""
     if tiktoken is None:
         return None
     if model in _TOKEN_ENCODERS:
@@ -165,6 +168,7 @@ def _get_encoder(model: str):
 
 
 def _count_tokens(text: str, model: str) -> int:
+    """Estimate token usage for *text* under the supplied *model*."""
     encoder = _get_encoder(model)
     if encoder is None:
         return max(1, len(text) // 4)
@@ -172,6 +176,7 @@ def _count_tokens(text: str, model: str) -> int:
 
 
 def _truncate_to_limit(text: str, config: LLMConfig, limit_tokens: int) -> Tuple[str, bool, int]:
+    """Trim *text* to fit within *limit_tokens*, returning (text, truncated?, count)."""
     encoder = _get_encoder(config.model)
     if encoder is None:
         approx_tokens = max(1, len(text) // 4)
@@ -255,6 +260,7 @@ def invoke_llm(
 
 
 def zero_metrics(name: str) -> LLMCallMetrics:
+    """Return an empty metrics object for *name* when no call was made."""
     config = get_llm_config(name)
     return LLMCallMetrics(
         name=name,

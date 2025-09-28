@@ -58,6 +58,7 @@ def initialize_vector_store() -> None:
 
 
 def _get_embedder() -> SentenceTransformer:
+    """Return a cached sentence-transformer instance for embedding text chunks."""
     global _embedder
     if _embedder is None:
         _embedder = SentenceTransformer(_EMBED_MODEL_NAME)
@@ -65,6 +66,7 @@ def _get_embedder() -> SentenceTransformer:
 
 
 def _get_encoder():
+    """Resolve the token encoder used for chunk sizing (tiktoken fallback)."""
     global _encoder
     if _encoder is None:
         if tiktoken is None:
@@ -75,6 +77,7 @@ def _get_encoder():
 
 
 def _encode_tokens(text: str) -> List[int]:
+    """Encode *text* into integer tokens using the configured encoder."""
     encoder = _get_encoder()
     if encoder == "char":
         return list(text.encode("utf-8"))
@@ -82,6 +85,7 @@ def _encode_tokens(text: str) -> List[int]:
 
 
 def _decode_tokens(tokens: List[int]) -> str:
+    """Decode integer *tokens* back into a string."""
     encoder = _get_encoder()
     if encoder == "char":
         return bytes(tokens).decode("utf-8", errors="ignore")
@@ -89,6 +93,7 @@ def _decode_tokens(tokens: List[int]) -> str:
 
 
 def _open_table():
+    """Initialise LanceDB (if needed) and return the working table."""
     initialize_vector_store()
     if lancedb is None or _db is None:
         return None
@@ -96,6 +101,7 @@ def _open_table():
 
 
 def _chunk_text(text: str) -> List[str]:
+    """Split long text into overlapping chunks sized for embedding."""
     tokens = _encode_tokens(text)
     if len(tokens) <= _CHUNK_SIZE_TOKENS:
         return [text]
@@ -112,6 +118,7 @@ def _chunk_text(text: str) -> List[str]:
 
 
 def _collect_text_chunks(state: ResearchState) -> List[Dict[str, Any]]:
+    """Extract chunkable text segments from relevant agent outputs in *state*."""
     collected: List[Dict[str, Any]] = []
     agent_keys = [
         "web_results",
@@ -167,11 +174,13 @@ def _collect_text_chunks(state: ResearchState) -> List[Dict[str, Any]]:
 
 
 def _record_id(chunk: Dict[str, Any]) -> str:
+    """Generate a deterministic identifier for a chunk to support upserts."""
     base = f"{chunk['agent']}::{chunk['source']}::{chunk['original_index']}::{chunk['chunk_index']}::{chunk['text']}"
     return hashlib.sha256(base.encode("utf-8")).hexdigest()
 
 
 def _upsert_records(table, records: List[Dict[str, Any]]) -> Tuple[int, int]:
+    """Upsert *records* into LanceDB, returning (upserted, deduped) counts."""
     if not records:
         return 0, 0
     upserted = 0
@@ -185,6 +194,7 @@ def _upsert_records(table, records: List[Dict[str, Any]]) -> Tuple[int, int]:
 
 
 def store_in_vector_db(state: ResearchState) -> Dict[str, Dict[str, Any]]:
+    """Index agent outputs in LanceDB so they can be retrieved later."""
     start = time.time()
     if lancedb is None:
         elapsed = time.time() - start
@@ -272,6 +282,7 @@ def store_in_vector_db(state: ResearchState) -> Dict[str, Dict[str, Any]]:
 
 
 def retrieve_from_vector_db(state: ResearchState) -> Dict[str, Dict[str, Any]]:
+    """Perform semantic search over the vector store for the current topic."""
     start = time.time()
     if lancedb is None:
         elapsed = time.time() - start

@@ -1,18 +1,19 @@
-﻿# This module exports academic research tools for use by research agents.
-__all__ = ["arxiv_tool", "scholar_search", "fetch_arxiv_structured"]
-# src/tools/academic_tools.py
+"""Academic research helper tools used by the agent suite."""
+from __future__ import annotations
+
 from typing import Any, Dict, List, Tuple
 
 from langchain_community.tools import ArxivQueryRun, DuckDuckGoSearchRun
 from langchain_community.utilities.arxiv import ArxivAPIWrapper
+
 from src.utils.structured_data import build_structured_record
 
-# arxiv_tool: Provides an interface to search and retrieve academic papers from arXiv.org.
-# Returns a list of relevant paper summaries or metadata for a given query.
+__all__ = ["arxiv_tool", "scholar_search", "fetch_arxiv_structured"]
+
+# Provide a high-level arXiv wrapper that returns full metadata for downstream processing.
 arxiv_tool = ArxivQueryRun(load_all_available_meta=True, doc_content_chars_max=None)
 
-# scholar_search: Uses DuckDuckGo to search Google Scholar for academic papers related to a query.
-# Returns a list of search result summaries or links for academic content.
+# DuckDuckGo search tuned for Google Scholar results grants broad academic coverage without an API key.
 scholar_search = DuckDuckGoSearchRun(
     name="GoogleScholarSearch",
     description="Searches Google Scholar for academic papers.",
@@ -20,7 +21,7 @@ scholar_search = DuckDuckGoSearchRun(
 
 
 def fetch_arxiv_structured(query: str, max_results: int) -> Tuple[List[Dict[str, Any]], str | None]:
-    """Return structured arXiv results including metadata and optional full text."""
+    """Return arXiv papers as unified structured records."""
     wrapper = ArxivAPIWrapper(
         top_k_results=max_results,
         load_all_available_meta=True,
@@ -32,6 +33,7 @@ def fetch_arxiv_structured(query: str, max_results: int) -> Tuple[List[Dict[str,
     except Exception as exc:  # pragma: no cover - third-party failure
         return [], str(exc)
 
+    # Attempt to fetch full text where available so downstream summarisation has richer context.
     content_map: Dict[str, str] = {}
     if search_results:
         try:
@@ -79,5 +81,3 @@ def fetch_arxiv_structured(query: str, max_results: int) -> Tuple[List[Dict[str,
         )
 
     return structured_results, None
-
-# Additional academic tools can be added below as needed for other sources or APIs.

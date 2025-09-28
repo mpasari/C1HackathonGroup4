@@ -5,6 +5,7 @@ from typing import Any, Iterable, List, Optional
 
 
 def _normalize_authors(authors: Any) -> List[str]:
+    """Return a list of author strings for heterogeneous *authors* inputs."""
     if not authors:
         return []
     if isinstance(authors, str):
@@ -20,6 +21,7 @@ def _normalize_authors(authors: Any) -> List[str]:
 
 
 def _format_date(value: Any) -> Optional[str]:
+    """Best-effort conversion of *value* to an ISO 8601 string."""
     if value is None:
         return None
     if isinstance(value, str):

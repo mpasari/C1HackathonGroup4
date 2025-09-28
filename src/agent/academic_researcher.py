@@ -1,19 +1,22 @@
-﻿import time
+"""Academic agent helpers for collecting structured research papers."""
+from __future__ import annotations
+
+import time
 from typing import Any, Dict, List
 
-# This module defines the academic researcher agent, which retrieves academic papers from arXiv and Google Scholar.
-from src.utils.llm_registry import get_llm
-from src.utils.structured_data import build_structured_record
 from langchain_community.embeddings import HuggingFaceEmbeddings
+
 from src.graph.state import ResearchState
 from src.tools.academic_tools import fetch_arxiv_structured, scholar_search
+from src.utils.llm_registry import get_llm
+from src.utils.structured_data import build_structured_record
 
-# LLM and embeddings are initialized for possible use in summarization or advanced features.
 llm = get_llm("research_assistant")
 embeddings = HuggingFaceEmbeddings()
 
 
 def _normalize_results(results: Any, limit: int) -> List[Any]:
+    """Clamp tool output to *limit* items so downstream processing stays bounded."""
     if isinstance(results, list):
         return results[:limit]
     if isinstance(results, str):
@@ -22,6 +25,7 @@ def _normalize_results(results: Any, limit: int) -> List[Any]:
 
 
 def _structure_generic_item(item: Any) -> Dict[str, Any]:
+    """Translate heterogeneous search records into the unified research schema."""
     if isinstance(item, dict):
         title = item.get("title") or item.get("name")
         summary = item.get("summary") or item.get("snippet") or item.get("description")
@@ -55,7 +59,8 @@ def _structure_generic_item(item: Any) -> Dict[str, Any]:
     )
 
 
-def _fetch_results(tool, query: str, limit: int) -> Dict[str, Any]:
+def _fetch_results(tool: Any, query: str, limit: int) -> Dict[str, Any]:
+    """Execute *tool* with *query* and return structured items plus error context."""
     try:
         raw = tool.run(query)
         normalized = _normalize_results(raw, limit)
@@ -66,14 +71,11 @@ def _fetch_results(tool, query: str, limit: int) -> Dict[str, Any]:
 
 
 def research_academic_papers(state: ResearchState) -> dict:
-    """
-    The academic researcher agent retrieves academic papers for the given topic from arXiv and Google Scholar.
-    Returns a dictionary with raw tool outputs and metadata.
-    """
+    """Collect academic search results for *state* from arXiv and Google Scholar."""
     start = time.time()
-    topic = state.get('topic', '')
-    mode = state.get('mode', 'extended')
-    num_items = 2 if mode == 'simple' else 10
+    topic = state.get("topic", "")
+    mode = state.get("mode", "extended")
+    num_items = 2 if mode == "simple" else 10
 
     arxiv_items, arxiv_error = fetch_arxiv_structured(topic, num_items)
     arxiv_metadata = {
@@ -112,5 +114,3 @@ def research_academic_papers(state: ResearchState) -> dict:
             "details": {"mode": mode, "topic": topic},
         }
     }
-
-

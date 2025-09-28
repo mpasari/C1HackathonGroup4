@@ -56,12 +56,14 @@ _session: Optional[Session] = None
 
 @lru_cache(maxsize=1)
 def _load_summary_prompt() -> str:
+    """Load the YouTube summary prompt template, cached across runs."""
     if _SUMMARY_PROMPT_PATH.exists():
         return _SUMMARY_PROMPT_PATH.read_text(encoding="utf-8")
     return _DEFAULT_SUMMARY_PROMPT
 
 
 def _ensure_ffmpeg_available() -> Optional[str]:
+    """Return the ffmpeg executable path if it can be resolved on PATH."""
     ffmpeg_path = shutil.which('ffmpeg')
     if ffmpeg_path is None:
         logger.warning('FFmpeg not found on PATH; Whisper fallback will be disabled')
@@ -69,6 +71,7 @@ def _ensure_ffmpeg_available() -> Optional[str]:
 
 
 def _ensure_whisper_model():
+    """Initialise and cache the Whisper model used for transcript fallback."""
     global _whisper_model
     if _whisper_model is not None:
         return _whisper_model
@@ -80,6 +83,7 @@ def _ensure_whisper_model():
 
 
 def _transcribe_with_whisper(video_id: str, video_url: str) -> Tuple[str, str, Optional[str]]:
+    """Download video audio and attempt transcription via Whisper."""
     if not _ENABLE_WHISPER_FALLBACK:
         return "", "", "whisper_fallback_disabled"
     if whisper is None:
@@ -127,6 +131,7 @@ def _transcribe_with_whisper(video_id: str, video_url: str) -> Tuple[str, str, O
 
 
 def _get_session() -> Session:
+    """Return a singleton HTTP session for YouTube API calls."""
     global _session
     if _session is None:
         _session = Session()
@@ -143,6 +148,7 @@ _SUMMARY_MAX_CHARS = 5000
 
 
 def _parse_duration(iso_duration: str) -> str:
+    """Convert YouTube ISO 8601 durations to a human-readable clock string."""
     if not iso_duration:
         return "Unknown"
     hours = minutes = seconds = 0
@@ -165,6 +171,7 @@ def _parse_duration(iso_duration: str) -> str:
 
 
 def _search_videos(api_key: str, query: str, max_results: int, extra_factor: int = 3) -> List[Dict]:
+    """Run the YouTube search API and return candidate video metadata."""
     published_after = (datetime.utcnow() - timedelta(days=_PUBLISHED_AFTER_DAYS)).isoformat("T") + "Z"
     params = {
         "key": api_key,
@@ -200,6 +207,7 @@ def _search_videos(api_key: str, query: str, max_results: int, extra_factor: int
 
 
 def _fetch_video_details(api_key: str, video_ids: List[str]) -> Dict[str, Dict]:
+    """Fetch duration and statistics for the supplied set of video IDs."""
     if not video_ids:
         return {}
     params = {
@@ -227,6 +235,7 @@ def _fetch_video_details(api_key: str, video_ids: List[str]) -> Dict[str, Dict]:
 
 
 def _fetch_transcript(video_id: str) -> Tuple[str, str, Optional[str]]:
+    """Pull captions for *video_id* using youtube-transcript-api when available."""
     def _segments_to_text(segments: List[Dict[str, Any]]) -> str:
         return " ".join(segment.get("text", "") for segment in segments if segment.get("text")).strip()
 
@@ -277,6 +286,7 @@ def _fetch_transcript(video_id: str) -> Tuple[str, str, Optional[str]]:
 
 
 def _summarize_video(title: str, channel: str, transcript: str, url: str) -> Tuple[str, Any]:
+    """Summarise a video's transcript with the LLM-based youtube summarizer."""
     if not transcript:
         return "No transcript available.", zero_metrics("youtube_summarizer")
     prompt_template = _load_summary_prompt()
@@ -292,6 +302,7 @@ def _summarize_video(title: str, channel: str, transcript: str, url: str) -> Tup
 
 
 def analyze_youtube(state: ResearchState) -> Dict[str, Dict]:
+    """Collect, transcribe, and summarise relevant YouTube content for *state*."""
     start = time.time()
     api_key = get_youtube_api_key()
     topic = state.get("topic", "")
