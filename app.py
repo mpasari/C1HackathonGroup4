@@ -804,7 +804,6 @@ def render_progress(entries: List[Dict[str, Any]], container: Any) -> None:
 
 
 
-    container.subheader("Workflow Progress")
 
 
 
