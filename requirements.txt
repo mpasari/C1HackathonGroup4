@@ -1,0 +1,53 @@
+﻿# For SerpAPI and Tavily web search support
+serpapi
+tavily-python
+# For HuggingFace Xet Storage performance
+huggingface_hub[hf_xet]
+# For HuggingFace embeddings support
+sentence-transformers
+# For DuckDuckGo search support
+ddgs
+# For arXiv API support
+arxiv
+# For PDF text extraction from arXiv downloads
+pymupdf
+# Core app and UI
+streamlit
+
+# LangGraph and LangChain ecosystem
+langgraph
+langchain
+langchain-openai
+langchain-community
+
+# LLMs and API clients
+openai
+# Token counting for model limits
+tiktoken
+
+# News and web search tools
+duckduckgo-search
+newsapi-python
+
+# For environment variable management
+python-dotenv
+
+# (Optional) For async/parallel execution, if needed
+anyio
+
+# (Optional) For type checking and dev
+typing-extensions
+
+# PDF generation for final report
+reportlab
+markdown2
+lancedb
+pyarrow
+google-api-python-client
+youtube-transcript-api
+yt-dlp
+# HTTP client for Perplexity integration
+requests
+# Optional transcription fallback
+openai-whisper
+torch
